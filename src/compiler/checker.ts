@@ -13233,11 +13233,16 @@ namespace ts {
                 let enumIsConst = isConst(node);
 
                 for (const member of node.members) {
-                    if (member.name.kind === SyntaxKind.ComputedPropertyName) {
+                    if (member.name.kind === SyntaxKind.ComputedPropertyName && !isStringOrNumericLiteral((<ComputedPropertyName>member.name).expression.kind)) {
                         error(member.name, Diagnostics.Computed_property_names_are_not_allowed_in_enums);
                     }
-                    else if (isNumericLiteralName((<Identifier>member.name).text)) {
-                        error(member.name, Diagnostics.An_enum_member_cannot_have_a_numeric_name);
+                    else {
+                        let text = member.name.kind === SyntaxKind.ComputedPropertyName 
+                            ? (<LiteralExpression>(<ComputedPropertyName>member.name).expression).text
+                            : (<Identifier>member.name).text;
+                        if (isNumericLiteralName(text)) {
+                            error(member.name, Diagnostics.An_enum_member_cannot_have_a_numeric_name);
+                        }
                     }
 
                     const previousEnumMemberIsNonConstant = autoValue === undefined;
@@ -15681,7 +15686,10 @@ namespace ts {
         }
 
         function checkGrammarForNonSymbolComputedProperty(node: DeclarationName, message: DiagnosticMessage) {
-            if (node.kind === SyntaxKind.ComputedPropertyName && !isWellKnownSymbolSyntactically((<ComputedPropertyName>node).expression)) {
+            let reportError = node.kind === SyntaxKind.ComputedPropertyName &&
+                !isWellKnownSymbolSyntactically((<ComputedPropertyName>node).expression) &&
+                !isStringOrNumericLiteral((<ComputedPropertyName>node).expression.kind);
+            if (reportError) {
                 return grammarErrorOnNode(node, message);
             }
         }

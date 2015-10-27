@@ -1,0 +1,43 @@
+tests/cases/conformance/es6/classDeclaration/emitClassDeclarationWithMethodInES6.ts(4,5): error TS2393: Duplicate function implementation.
+tests/cases/conformance/es6/classDeclaration/emitClassDeclarationWithMethodInES6.ts(5,5): error TS2393: Duplicate function implementation.
+tests/cases/conformance/es6/classDeclaration/emitClassDeclarationWithMethodInES6.ts(6,5): error TS2393: Duplicate function implementation.
+tests/cases/conformance/es6/classDeclaration/emitClassDeclarationWithMethodInES6.ts(13,12): error TS2393: Duplicate function implementation.
+tests/cases/conformance/es6/classDeclaration/emitClassDeclarationWithMethodInES6.ts(14,12): error TS2393: Duplicate function implementation.
+tests/cases/conformance/es6/classDeclaration/emitClassDeclarationWithMethodInES6.ts(15,12): error TS2393: Duplicate function implementation.
+
+
+==== tests/cases/conformance/es6/classDeclaration/emitClassDeclarationWithMethodInES6.ts (6 errors) ====
+    class D {
+        _bar: string;
+        foo() { }
+        ["computedName"]() { }
+        ~~~~~~~~~~~~~~~~
+!!! error TS2393: Duplicate function implementation.
+        ["computedName"](a: string) { }
+        ~~~~~~~~~~~~~~~~
+!!! error TS2393: Duplicate function implementation.
+        ["computedName"](a: string): number { return 1; }
+        ~~~~~~~~~~~~~~~~
+!!! error TS2393: Duplicate function implementation.
+        bar(): string {
+            return this._bar;
+        } 
+        baz(a: any, x: string): string {
+            return "HELLO";
+        }
+        static ["computedname"]() { }
+               ~~~~~~~~~~~~~~~~
+!!! error TS2393: Duplicate function implementation.
+        static ["computedname"](a: string) { }
+               ~~~~~~~~~~~~~~~~
+!!! error TS2393: Duplicate function implementation.
+        static ["computedname"](a: string): boolean { return true; }
+               ~~~~~~~~~~~~~~~~
+!!! error TS2393: Duplicate function implementation.
+        static staticMethod() {
+            var x = 1 + 2;
+            return x
+        }
+        static foo(a: string) { }
+        static bar(a: string): number { return 1; }
+    }

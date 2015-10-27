@@ -1419,6 +1419,10 @@ namespace ts {
         return isFunctionLike(node) && (node.flags & NodeFlags.Async) !== 0 && !isAccessor(node);
     }
 
+    export function isStringOrNumericLiteral(kind: SyntaxKind): boolean {
+        return kind === SyntaxKind.StringLiteral || kind === SyntaxKind.NumericLiteral;
+    }
+
     /**
      * A declaration has a dynamic name if both of the following are true:
      *   1. The declaration has a computed property name
@@ -1429,6 +1433,7 @@ namespace ts {
     export function hasDynamicName(declaration: Declaration): boolean {
         return declaration.name &&
             declaration.name.kind === SyntaxKind.ComputedPropertyName &&
+            !isStringOrNumericLiteral((<ComputedPropertyName>declaration.name).expression.kind) &&
             !isWellKnownSymbolSyntactically((<ComputedPropertyName>declaration.name).expression);
     }
 
