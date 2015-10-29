@@ -14,6 +14,10 @@ namespace ts {
     
     export const version = "1.6.2";
 
+    //[START PATCH] Hornet 5
+    declare var require: any;
+    //[END PATCH] Hornet 5
+
     export function findConfigFile(searchPath: string): string {
         let fileName = "tsconfig.json";
         while (true) {
@@ -65,7 +69,18 @@ namespace ts {
                 : { resolvedModule: undefined, failedLookupLocations };
         }
         else {
-            return loadModuleFromNodeModules(moduleName, containingDirectory, host);
+            //[START PATCH] Hornet 5
+            var resolvedNodeModule = loadModuleFromNodeModules(moduleName, containingDirectory, host);
+            if (!resolvedNodeModule.resolvedModule){
+                // containingFile contient le lien relatif vers le fichier d'origine à partir du repertoire courant
+                var resolvedFileName = loadNodeModuleFromBasePath(moduleName,containingDirectory,resolvedNodeModule.failedLookupLocations, host as CompilerHost);
+                if (resolvedFileName) {
+                    resolvedNodeModule.resolvedModule= { resolvedFileName: resolvedFileName };
+                }
+            }
+
+            return resolvedNodeModule;
+            //[END PATCH] Hornet 5
         }
     }
     
@@ -148,7 +163,41 @@ namespace ts {
         
         return { resolvedModule: undefined, failedLookupLocations };
     }
-    
+
+    //[START PATCH] Hornet 5
+    function loadNodeModuleFromBasePath(candidate:string, basePath:string, failedLookupLocation: string[], host: CompilerHost) {
+        var path= require("path");
+        basePath = path.resolve(host.getCurrentDirectory(),basePath);
+        while (true){
+            var newCandidate = ts.combinePaths(basePath, candidate);
+            var result = tryLoad(newCandidate);
+            if (result) {
+                return result;
+            }else{
+                basePath = path.resolve(basePath, "..");
+                if (path.basename(basePath).length ==0){
+                    // On est arrivé à la racine
+                    break;
+                }
+            }
+        }
+
+        function tryLoad(candidateInternal:string){
+            function tryLoadInternal(ext:string) {
+                var fileName = ts.fileExtensionIs(candidateInternal, ext) ? candidateInternal : candidateInternal + ext;
+                if (host.fileExists(fileName)) {
+                    return fileName;
+                }
+                else {
+                    failedLookupLocation.push(fileName);
+                    return undefined;
+                }
+            }
+            return ts.forEach(ts.supportedExtensions, tryLoadInternal);
+        }
+    }
+    //[END PATCH] Hornet 5
+
     function nameStartsWithDotSlashOrDotDotSlash(name: string) {
         let i = name.lastIndexOf("./", 1);
         return i === 0 || (i === 1 && name.charCodeAt(0) === CharacterCodes.dot);
