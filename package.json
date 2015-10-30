@@ -1,8 +1,8 @@
 {
-    "name": "typescript",
+    "name": "hornet-js-typescript",
     "author": "Microsoft Corp. Patched by MAEDI",
     "homepage": "http://typescriptlang.org/",
-    "version": "1.6.2-MAEDI",
+    "version": "1.6.2",
     "license": "Apache-2.0",
     "description": "TypeScript is a language for application scale JavaScript development",
     "keywords": [

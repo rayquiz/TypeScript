@@ -12,7 +12,7 @@ namespace ts {
     
     let emptyArray: any[] = [];
     
-    export const version = "1.6.2-MAEDI";
+    export const version = "1.6.2";
 
     //[START PATCH] Hornet 5
     declare var require: any;
