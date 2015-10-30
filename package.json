@@ -1,8 +1,8 @@
 {
     "name": "typescript",
-    "author": "Microsoft Corp.",
+    "author": "Microsoft Corp. Patched by MAEDI",
     "homepage": "http://typescriptlang.org/",
-    "version": "1.6.2",
+    "version": "1.6.2-MAEDI",
     "license": "Apache-2.0",
     "description": "TypeScript is a language for application scale JavaScript development",
     "keywords": [
